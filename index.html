@@ -4,15 +4,42 @@
   <meta charset="UTF-8">
   <title>Predict the Pattern</title>
   <style>
-    body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
-    .pattern { font-size: 48px; margin-bottom: 20px; }
-    .choices button { font-size: 24px; margin: 10px; padding: 10px 20px; }
-    .result { font-size: 24px; margin-top: 20px; height: 30px; }
-    .score { font-size: 20px; margin-top: 10px; }
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 30px;
+      margin: 0;
+      background-color: #f9f9f9;
+    }
+    .pattern {
+      font-size: 8vw;
+      margin-bottom: 20px;
+    }
+    .choices button {
+      font-size: 6vw;
+      margin: 10px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 10px;
+      background-color: #e0e0e0;
+      cursor: pointer;
+    }
+    .choices button:hover {
+      background-color: #d0d0d0;
+    }
+    .result {
+      font-size: 5vw;
+      margin-top: 20px;
+      height: 40px;
+    }
+    .score {
+      font-size: 4vw;
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
-  <h1>Predict the Pattern!</h1>
+  <h1 style="font-size: 6vw;">Predict the Pattern!</h1>
   <div class="pattern" id="pattern">🔴 🔵 🔴 🔵 ❓</div>
   <div class="choices">
     <button onclick="makeGuess('🔴')">🔴</button>
@@ -21,27 +48,36 @@
   </div>
   <div class="result" id="result"></div>
   <div class="score" id="scoreDisplay">점수: 0</div>
+  <audio id="correctSound" src="https://www.soundjay.com/buttons/sounds/button-09.mp3"></audio>
+  <audio id="wrongSound" src="https://www.soundjay.com/buttons/sounds/button-10.mp3"></audio>
   <script>
-    let score = 0;
+    let score = parseInt(localStorage.getItem('score')) || 0;
     let currentPattern = ['🔴', '🔵', '🔴', '🔵'];
     let answer = '🔴';
+
+    document.getElementById('scoreDisplay').innerText = `점수: ${score}`;
 
     function makeGuess(guess) {
       const resultDiv = document.getElementById('result');
       const scoreDisplay = document.getElementById('scoreDisplay');
+      const correctSound = document.getElementById('correctSound');
+      const wrongSound = document.getElementById('wrongSound');
+
       if (guess === answer) {
         score++;
+        localStorage.setItem('score', score);
+        correctSound.play();
         resultDiv.innerText = `정답! 🎉`;
         scoreDisplay.innerText = `점수: ${score}`;
         nextRound();
       } else {
+        wrongSound.play();
         resultDiv.innerText = `틀렸어요 😢 힌트: ${getHint()}`;
       }
     }
 
     function nextRound() {
       currentPattern.push(answer);
-      // 패턴을 복잡하게 하기 위해 3번째부터 무작위 삽입
       if (currentPattern.length > 6) {
         const options = ['🔴', '🔵', '🟢'];
         answer = options[Math.floor(Math.random() * options.length)];
