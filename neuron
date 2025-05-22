@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Predict the Pattern</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
+    .pattern { font-size: 48px; margin-bottom: 20px; }
+    .choices button { font-size: 24px; margin: 10px; padding: 10px 20px; }
+    .result { font-size: 24px; margin-top: 20px; height: 30px; }
+    .score { font-size: 20px; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <h1>Predict the Pattern!</h1>
+  <div class="pattern" id="pattern">🔴 🔵 🔴 🔵 ❓</div>
+  <div class="choices">
+    <button onclick="makeGuess('🔴')">🔴</button>
+    <button onclick="makeGuess('🔵')">🔵</button>
+    <button onclick="makeGuess('🟢')">🟢</button>
+  </div>
+  <div class="result" id="result"></div>
+  <div class="score" id="scoreDisplay">점수: 0</div>
+  <script>
+    let score = 0;
+    let currentPattern = ['🔴', '🔵', '🔴', '🔵'];
+    let answer = '🔴';
+
+    function makeGuess(guess) {
+      const resultDiv = document.getElementById('result');
+      const scoreDisplay = document.getElementById('scoreDisplay');
+      if (guess === answer) {
+        score++;
+        resultDiv.innerText = `정답! 🎉`;
+        scoreDisplay.innerText = `점수: ${score}`;
+        nextRound();
+      } else {
+        resultDiv.innerText = `틀렸어요 😢 힌트: ${getHint()}`;
+      }
+    }
+
+    function nextRound() {
+      currentPattern.push(answer);
+      // 패턴을 복잡하게 하기 위해 3번째부터 무작위 삽입
+      if (currentPattern.length > 6) {
+        const options = ['🔴', '🔵', '🟢'];
+        answer = options[Math.floor(Math.random() * options.length)];
+      } else {
+        answer = (answer === '🔴') ? '🔵' : '🔴';
+      }
+      const patternDisplay = [...currentPattern, '❓'].join(' ');
+      document.getElementById('pattern').innerText = patternDisplay;
+    }
+
+    function getHint() {
+      const counts = currentPattern.reduce((acc, val) => {
+        acc[val] = (acc[val] || 0) + 1;
+        return acc;
+      }, {});
+      return Object.entries(counts)
+        .map(([emoji, count]) => `${emoji}: ${count}회`)
+        .join(' / ');
+    }
+  </script>
+</body>
+</html>
